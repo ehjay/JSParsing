@@ -5,6 +5,9 @@ module.exports = (function() {
 
   function getToken(stream, source) {
     var rx_token = /^((\s+)|([a-zA-Z][a-zA-Z0-9_]*)|(\()|(\))|(!=|==|<=|>=|<|>)|(-|\+)|(\*|\/|,))(.*)$/;
+    var results;
+    var value;
+    var rest;
 
     // 0 source
     // 1 match
@@ -17,9 +20,10 @@ module.exports = (function() {
     // 8 binary operators (* or / or ,)
     // 9 the rest
 
-    var results = source.match(rx_token);
-    var value = results[1];
-    var rest = results[9];
+    results = source.match(rx_token);
+    value = results[1];
+    rest = results[9];
+
     stream.push(value);
 
     return rest;
