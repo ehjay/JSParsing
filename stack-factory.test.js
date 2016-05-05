@@ -1,5 +1,5 @@
 var assert = require('chai').assert;
-var stackFactory = require('./stack');
+var stackFactory = require('./stack-factory');
 
 describe('stack', function() {
   describe('#stack', function () {
