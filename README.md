@@ -10,4 +10,4 @@ Get libraries:
 
 Run tests:
 
-    mocha
+    mocha "*.js"
