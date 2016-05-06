@@ -1,7 +1,5 @@
 module.exports = (function() {
-  return {
-    toTokenStream: toTokenStream
-  };
+  return toTokenStream;
 
   function getToken(stream, source) {
     var rx_token = /^((\s+)|([a-zA-Z][a-zA-Z0-9_]*)|(\()|(\))|(-|\+)|(!=|==|<=|>=|<|>|\*|\/|,))(.*)$/;
