@@ -10,9 +10,9 @@ module.exports = (function() {
     }
 
     return this[this.length - 1];
-  }
+  };
 
   return function validate() {
     return new Stack();
-  }
+  };
 })();

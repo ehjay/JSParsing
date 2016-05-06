@@ -1,13 +1,6 @@
 # JSParsing
 simple parsing fun in JavaScript!
 
-#Tests
-
-Get libraries:
-
-    npm install -g mocha
-    npm install chai
-
-Run tests:
-
-    mocha "*.js"
+    npm install
+    npm run lint
+    npm run test
