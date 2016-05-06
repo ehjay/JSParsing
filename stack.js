@@ -4,7 +4,7 @@ module.exports = (function() {
 
     this.push = function push(element) {
       array.push(element);
-    }
+    };
 
     this.pop = function pop() {
       if (array.length === 0) {
@@ -12,7 +12,7 @@ module.exports = (function() {
       }
 
       return array.pop();
-    }
+    };
 
     this.peek = function peek() {
       if (array.length === 0) {
@@ -20,11 +20,11 @@ module.exports = (function() {
       }
 
       return array[array.length - 1];
-    }
+    };
 
     this.size = function size() {
       return array.length;
-    }
+    };
   }
 
   return function createStack() {

@@ -1,4 +1,4 @@
-const token = require('./token');
+var token = require('./token');
 
 module.exports = (function() {
   return toTokenStream;

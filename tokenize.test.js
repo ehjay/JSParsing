@@ -1,12 +1,12 @@
-const assert = require('chai').assert;
-const _ = require('lodash');
+var assert = require('chai').assert;
+var _ = require('lodash');
 
-const tokenizer = require('./tokenizer');
+var tokenize = require('./tokenize');
 
-describe('tokenizer', function() {
-  describe('#tokenizer', function () {
+describe('tokenize', function() {
+  describe('#tokenize', function () {
     it('should return an array', function () {
-      assert.isArray(tokenizer(""));
+      assert.isArray(tokenize(""));
     });
 
     it('should tokenize identifiers', function () {
@@ -26,7 +26,7 @@ describe('tokenizer', function() {
     });
 
     function tokenValues(source) {
-      return _.map(tokenizer(source), 'value');
+      return _.map(tokenize(source), 'value');
     }
   });
 });

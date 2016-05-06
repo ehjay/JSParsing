@@ -7,5 +7,5 @@ module.exports = (function() {
 
   return function createToken(type, value) {
     return new Token(type, value);
-  }
+  };
 })();
