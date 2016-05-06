@@ -59,5 +59,20 @@ describe('validate', function() {
       );
     });
 
+    it('should warn about unknown identifiers', function () {
+      var warnings = [];
+
+      validate.expandTokens(
+        [
+          { type: "identifier", value: "c" },
+        ],
+        [],
+        ["a", "b"],
+        warnings
+      );
+
+      assert.isTrue(warnings.length > 0);
+    });
+
   });
 });

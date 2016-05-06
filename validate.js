@@ -3,10 +3,42 @@ var stackFactory = require('./stack');
 var tokenize = require('./tokenize');
 
 module.exports = (function() {
+  var messageTemplates = {
+    unknown_identifier: "unknown identifier {a} found at column {column}"
+  };
+
   return {
     expandTokens: expandTokens,
     validate: validate
   };
+
+  function supplant(str, obj) {
+    var rx_supplant = /\{([^{}]*)\}/g;
+
+    return str.replace(rx_supplant, function (match, inside) {
+      var replacement = obj[inside];
+      return (replacement !== undefined) ? replacement : match;
+    });
+  }
+
+  function warn_at(column, warnings, template, a, b, c) {
+    var message;
+    var replacements = { column: column };
+
+    if (a) {
+      replacements.a = a;
+    }
+
+    if (b) {
+      replacements.b = b;
+    }
+
+    if (c) {
+      replacements.c = c;
+    }
+
+    warnings.push(supplant(template, replacements));
+  }
 
   function validate(source, functionNames, variableNames) {
     var stack = stackFactory();
@@ -43,12 +75,12 @@ module.exports = (function() {
         continue;
       }
 
-      if (_.includes(functionNames, token.value)) {
+      if ( _.includes(functionNames, token.value) ) {
         token.type = "function";
-      } else if (_.includes(variableNames), token.value) {
+      } else if ( _.includes(variableNames, token.value) ) {
         token.type = "variable";
       } else {
-        warnings.push("unknown identifier " + token.value + " found at column " + column);
+        warn_at(token.column, warnings, messageTemplates.unknown_identifier, token.value);
       }
     }
 
