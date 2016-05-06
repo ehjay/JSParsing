@@ -1,3 +1,5 @@
+const token = require('./token');
+
 module.exports = (function() {
   return toTokenStream;
 
@@ -22,7 +24,7 @@ module.exports = (function() {
     value = results[1];
     rest = results[9];
 
-    stream.push(value);
+    stream.push(token("generic", value));
 
     return rest;
   }
