@@ -2,13 +2,21 @@ var assert = require('chai').assert;
 var stackFactory = require('./stack-factory');
 
 describe('stack', function() {
-  describe('#stack', function () {
+  describe('#Stack', function () {
     it('should make a stack', function () {
       var stack = stackFactory();
       assert.isNotNull(stack);
     });
 
-    it('should push and pop values', function () {
+    it('should push values', function () {
+      var stack = stackFactory();
+      stack.push(4);
+      assert.equal(stack.length, 1);
+      stack.push(9);
+      assert.equal(stack.length, 2);
+    });
+
+    it('should pop values', function () {
       var stack = stackFactory();
       stack.push(4);
       assert.equal(stack.length, 1);
