@@ -2,7 +2,7 @@ module.exports = (function() {
   return toTokenStream;
 
   function getToken(stream, source) {
-    var rx_token = /^((\s+)|([a-zA-Z][a-zA-Z0-9_]*)|(\()|(\))|(-|\+)|(!=|==|<=|>=|<|>|\*|\/|,))(.*)$/;
+    var rx_token = /^((\s+)|([a-zA-Z][a-zA-Z0-9_]*)|("[^"]*"|[0-9]+(?:\.[0-9]*)?)|(\()|(\))|(-|\+)|(!=|==|<=|>=|<|>|\*|\/|,))(.*)$/;
     var results;
     var value;
     var rest;
@@ -11,15 +11,16 @@ module.exports = (function() {
     // 1 match
     // 2 whitespace
     // 3 identifier
-    // 4 open bracket
-    // 5 close bracket
-    // 6 unary or binary operators (+ or -)
-    // 7 binary operators
-    // 8 the rest
+    // 4 string or number literal
+    // 5 open bracket
+    // 6 close bracket
+    // 7 unary or binary operators (+ or -)
+    // 8 binary operators
+    // 9 the rest
 
     results = source.match(rx_token);
     value = results[1];
-    rest = results[8];
+    rest = results[9];
 
     stream.push(value);
 
