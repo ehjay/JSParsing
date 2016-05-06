@@ -11,29 +11,29 @@ describe('stack', function() {
     it('should push values', function () {
       var stack = stackFactory();
       stack.push(4);
-      assert.equal(stack.length, 1);
+      assert.equal(stack.size(), 1);
       stack.push(9);
-      assert.equal(stack.length, 2);
+      assert.equal(stack.size(), 2);
     });
 
     it('should pop values', function () {
       var stack = stackFactory();
       stack.push(4);
-      assert.equal(stack.length, 1);
+      assert.equal(stack.size(), 1);
       stack.push(9);
-      assert.equal(stack.length, 2);
+      assert.equal(stack.size(), 2);
       assert.equal(stack.pop(), 9);
       assert.equal(stack.pop(), 4);
-      assert.equal(stack.length, 0);
+      assert.equal(stack.size(), 0);
     });
 
     it('should peek at values', function () {
       var stack = stackFactory();
       assert.equal(stack.peek(), undefined);
       stack.push(3);
-      assert.equal(stack.length, 1);
+      assert.equal(stack.size(), 1);
       assert.equal(stack.peek(), 3);
-      assert.equal(stack.length, 1);
+      assert.equal(stack.size(), 1);
     });
   });
 });
