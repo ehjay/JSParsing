@@ -105,7 +105,7 @@ describe('tokenize', function() {
 
       assert.deepEqual(
         tokenize(",")[0],
-        { type: "binary", value: "," }
+        { type: ",", value: "," }
       );
     });
 

@@ -1,9 +1,23 @@
 module.exports = (function() {
   function Stack() {
     var array = [];
+    var used = false;
+
+    this.isEmpty = function isEmpty() {
+      return array.length === 0;
+    };
+
+    this.isUsed = function isUsed() {
+      return used;
+    };
+
+    this.isUnused = function isUnused() {
+      return !used;
+    };
 
     this.push = function push(element) {
       array.push(element);
+      used = true;
     };
 
     this.pop = function pop() {

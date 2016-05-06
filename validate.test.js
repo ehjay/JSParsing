@@ -64,14 +64,34 @@ describe('validate', function() {
 
       validate.expandTokens(
         [
-          { type: "identifier", value: "c" },
+          { type: "identifier", value: "c" }
         ],
         [],
         ["a", "b"],
         warnings
       );
 
-      assert.isTrue(warnings.length > 0);
+      assert.equal(warnings[0].key, "unknown_identifier_a");
+    });
+
+    it('should warn about whitespace after a function', function () {
+      var result = validate.validate(
+        "MAX   ",
+        ["MAX"],
+        []
+      );
+
+      assert.equal(result.warnings[0].key, "expected_a_after_b");
+    });
+
+    it('should warn about functions after variables', function () {
+      var result = validate.validate(
+        "a MAX",
+        ["MAX"],
+        ["a"]
+      );
+
+      assert.equal(result.warnings[0].key, "expected_a_before_b");
     });
 
   });

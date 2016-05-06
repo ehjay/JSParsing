@@ -5,7 +5,7 @@ module.exports = (function() {
   return toTokenStream;
 
   function getToken(stream, source) {
-    var rx_token = /^((\s+)|([a-zA-Z][a-zA-Z0-9_]*)|("[^"]*"|[0-9]+(?:\.[0-9]*)?)|(\()|(\))|(-|\+)|(!=|==|<=|>=|<|>|\*|\/|,))(.*)$/;
+    var rx_token = /^((\s+)|([a-zA-Z][a-zA-Z0-9_]*)|("[^"]*"|[0-9]+(?:\.[0-9]*)?)|(\()|(\))|(-|\+)|(!=|==|<=|>=|<|>|\*|\/)|(,))(.*)$/;
     var results;
     var value;
     var rest;
@@ -21,13 +21,14 @@ module.exports = (function() {
     // 6 close bracket
     // 7 unary or binary operators (+ or -)
     // 8 binary operators
-    // 9 the rest
+    // 9 comma
+    // 10 the rest
 
     results = source.match(rx_token);
     value = results[1];
-    rest = results[9];
+    rest = results[10];
 
-    matchIndex = _.findIndex(results, function(value, key) { return key > 1 && key < 9 && value; });
+    matchIndex = _.findIndex(results, function(value, key) { return key > 1 && key < 10 && value; });
 
     switch(matchIndex) {
       case 2:
@@ -50,6 +51,9 @@ module.exports = (function() {
         break;
       case 8:
         type = 'binary';
+        break;
+      case 9:
+        type = ',';
         break;
       default:
         type = 'unknown';
