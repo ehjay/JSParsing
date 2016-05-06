@@ -7,5 +7,13 @@ describe('token', function() {
       assert.isObject(tokenFactory());
     });
 
+    it('should have a type', function () {
+      assert.property(tokenFactory("a", "b"), "type");
+    });
+
+    it('should have a value', function () {
+      assert.property(tokenFactory("a", "b"), "value");
+    });
+
   });
 });
