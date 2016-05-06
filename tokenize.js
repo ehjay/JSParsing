@@ -1,4 +1,5 @@
 var token = require('./token');
+var _ = require('lodash');
 
 module.exports = (function() {
   return toTokenStream;
@@ -8,6 +9,8 @@ module.exports = (function() {
     var results;
     var value;
     var rest;
+    var matchIndex;
+    var type;
 
     // 0 source
     // 1 match
@@ -24,7 +27,36 @@ module.exports = (function() {
     value = results[1];
     rest = results[9];
 
-    stream.push(token("generic", value));
+    matchIndex = _.findIndex(results, function(value, key) { return key > 1 && key < 9 && value; });
+
+    switch(matchIndex) {
+      case 2:
+        type = 'whitespace';
+        break;
+      case 3:
+        type = 'identifier';
+        break;
+      case 4:
+        type = 'literal';
+        break;
+      case 5:
+        type = '(';
+        break;
+      case 6:
+        type = ')';
+        break;
+      case 7:
+        type = 'unary_or_binary';
+        break;
+      case 8:
+        type = 'binary';
+        break;
+      default:
+        type = 'unknown';
+        break;
+    }
+
+    stream.push(token(type, value));
 
     return rest;
   }
