@@ -68,15 +68,12 @@ module.exports = (function() {
     if (stack.peek().type === "function") {
       warn(token.column, warnings, "expected_a_after_b", "(", stack.peek().value);
     }
-  }
 
-  function isBinary(token) {
-    return token.type === 'unary_or_binary' ||
-      token.type === 'binary';
+    // whitespace should not be pushed onto the stack
   }
 
   function validateFunction(token, stack, warnings) {
-    if (stack.isUsed() && ( stack.isEmpty() || !isBinary(stack.peek()) ) ) {
+    if (stack.isUsed() && ( stack.isEmpty() || stack.peek().isBinary() ) ) {
       warn(token.column, warnings, "expected_a_before_b",  "operator", token.value);
     }
 
@@ -84,11 +81,34 @@ module.exports = (function() {
   }
 
   function validateVariable(token, stack, warnings) {
-    if (stack.isUsed() && ( stack.isEmpty() || !isBinary(stack.peek()) ) ) {
-      warn(token.column, warnings, "expected_a_before_b",  "operator", token.value);
+    var valid = true;
+
+    var stackIsUsed = stack.isUsed();
+    var stackIsEmpty = stack.isEmpty();
+
+    var last;
+    var isBinary;
+    var isOpenBracket;
+    var isComma;
+
+    if ( stackIsUsed && stackIsEmpty ) {
+      valid = false;
+    } else if (stackIsUsed) {
+      last = stack.peek();
+      isBinary = isBinary(last);
+      lastIsOpenBracket = ( last.type === "(" );
+      lastIsComma = ( last.type === "," );
+    }
+
+    if ( !valid ) {
+      warn(token.column, warnings, "unexpected_variable_a", token.value);
     }
 
     stack.push(token);
   }
+
+  function validateLiteral(token, stack, warnings) {
+  }
+
 })();
 

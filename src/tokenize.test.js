@@ -10,103 +10,117 @@ describe('tokenize', function() {
     });
 
     it('should tokenize whitespace', function () {
-      assert.deepEqual(
-        tokenize("    ")[0],
-        { type: "whitespace", value: "    " }
-      );
+      var raw = "    ";
+      var token = tokenize(raw)[0];
+
+      assert.equal(token.type, "whitespace");
+      assert.equal(token.value, "    ");
     });
 
     it('should tokenize identifiers', function () {
-      assert.deepEqual(
-        tokenize("myName_01")[0],
-        { type: "identifier", value: "myName_01" }
-      );
+      var raw = "myName_01";
+      var token = tokenize(raw)[0];
+
+      assert.equal(token.type, "identifier");
+      assert.equal(token.value, "myName_01");
     });
 
     it('should tokenize literals', function () {
-      assert.deepEqual(
-        tokenize("\"my string literal\"")[0],
-        { type: "literal", value: "\"my string literal\"" }
-      );
+      var raw;
+      var token;
 
-      assert.deepEqual(
-        tokenize("0")[0], 
-        { type: "literal", value : "0" }
-      );
+      raw = "\"my string literal\"";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "literal");
+      assert.equal(token.value, "\"my string literal\"");
 
-      assert.deepEqual(
-        tokenize("2048")[0], 
-        { type: "literal", value : "2048" }
-      );
+      raw = "0";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "literal");
+      assert.equal(token.value, "0");
 
-      assert.deepEqual(
-        tokenize("0.001")[0], 
-        { type: "literal", value : "0.001" }
-      );
+      raw = "2048";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "literal");
+      assert.equal(token.value, "2048");
 
-      assert.deepEqual(
-        tokenize("1.0")[0], 
-        { type: "literal", value : "1.0" }
-      );
+      raw = "0.001";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "literal");
+      assert.equal(token.value, "0.001");
+
+      raw = "1.0";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "literal");
+      assert.equal(token.value, "1.0");
     });
 
     it('should tokenize brackets', function () {
-      assert.deepEqual(
-        tokenize("(")[0],
-        { type: "(", value: "(" }
-      );
+      var raw;
+      var token;
 
-      assert.deepEqual(
-        tokenize(")")[0],
-        { type: ")", value: ")" }
-      );
+      raw = "(";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "(");
+      assert.equal(token.value, "(");
+
+      raw = ")";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, ")");
+      assert.equal(token.value, ")");
     });
 
     it('should tokenize unary and binary operators', function () {
-      assert.deepEqual(
-        tokenize("+")[0],
-        { type: "unary_or_binary", value: "+" }
-      );
+      var raw;
+      var token;
 
-      assert.deepEqual(
-        tokenize("-")[0],
-        { type: "unary_or_binary", value: "-" }
-      );
+      raw = "+";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "unary_or_binary");
+      assert.equal(token.value, "+");
 
-      assert.deepEqual(
-        tokenize("!=")[0],
-        { type: "binary", value: "!=" }
-      );
+      raw = "-";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "unary_or_binary");
+      assert.equal(token.value, "-");
 
-      assert.deepEqual(
-        tokenize("==")[0],
-        { type: "binary", value: "==" }
-      );
+      raw = "!=";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "binary");
+      assert.equal(token.value, "!=");
 
-      assert.deepEqual(
-        tokenize(">=")[0],
-        { type: "binary", value: ">=" }
-      );
+      raw = "==";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "binary");
+      assert.equal(token.value, "==");
 
-      assert.deepEqual(
-        tokenize(">")[0],
-        { type: "binary", value: ">" }
-      );
+      raw = ">=";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "binary");
+      assert.equal(token.value, ">=");
 
-      assert.deepEqual(
-        tokenize("*")[0],
-        { type: "binary", value: "*" }
-      );
+      raw = ">";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "binary");
+      assert.equal(token.value, ">");
 
-      assert.deepEqual(
-        tokenize("/")[0],
-        { type: "binary", value: "/" }
-      );
+      raw = "*";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "binary");
+      assert.equal(token.value, "*");
 
-      assert.deepEqual(
-        tokenize(",")[0],
-        { type: ",", value: "," }
-      );
+      raw = "/";
+      token = tokenize(raw)[0];
+      assert.equal(token.type, "binary");
+      assert.equal(token.value, "/");
+    });
+
+    it('should tokenize commas', function () {
+      var raw = ",";
+      var token = tokenize(raw)[0];
+
+      assert.equal(token.type, ",");
+      assert.equal(token.value, ",");
     });
 
     it('should tokenize expressions', function () {

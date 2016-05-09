@@ -5,6 +5,7 @@ module.exports = (function() {
   var messageTemplates = {
     expected_a_after_b: "expected {a} after {b} at column {column}",
     expected_a_before_b: "expected {a} before {b} at column {column}",
+    unexpected_variable_a: "unexpected variable {a} found at column {column}",
     unknown_identifier_a: "unknown identifier {a} found at column {column}"
   };
 
