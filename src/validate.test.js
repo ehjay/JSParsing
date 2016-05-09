@@ -33,5 +33,21 @@ describe('validate', function() {
       assert.equal(warning.b, "MAX");
     });
 
+    it('should accept variables as function arguments', function () {
+      var result = validate("MAX(a)", ["MAX"], ["a"]);
+      assert.isTrue(result.isValid);
+    });
+
+    it('should accept literals as function arguments', function () {
+      var result = validate("MAX(2)", ["MAX"], []);
+      assert.isTrue(result.isValid);
+
+      result = validate("MAX(0.001)", ["MAX"], []);
+      assert.isTrue(result.isValid);
+
+      result = validate("LEN(\"hello\")", ["LEN"], []);
+      assert.isTrue(result.isValid);
+    });
+
   });
 });

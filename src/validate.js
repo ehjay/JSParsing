@@ -9,7 +9,7 @@ module.exports = (function() {
   return validate;
 
   function Result(warnings) {
-    this.valid = ( warnings.length > 0 ) ? false : true;
+    this.isValid = ( warnings.length > 0 ) ? false : true;
     this.warnings = warnings;
   }
 
@@ -62,6 +62,11 @@ module.exports = (function() {
       case "binary":
         validateOperator(token, stack, warnings);
         break;
+      case "comma":
+        validateOperator(token, stack, warnings);
+        break;
+      default:
+        throw "tried to validate unknown token type";
     }
   }
 
@@ -142,6 +147,69 @@ module.exports = (function() {
   }
 
   function validateLiteral(token, stack, warnings) {
+    var top;
+
+    if ( !stack.isUsed() ) {
+      stack.push(token);
+      return;
+    }
+
+    if ( stack.isUsed() && stack.isEmpty() ) {
+      warn(token.column, warnings, "unexpected_a_b", "literal", token.value);
+      return;
+    }
+
+    top = stack.peek();
+
+    if ( top.isOperator() || top.isComma() ) {
+      stack.pop();
+    } else if ( top.isOpener() ) {
+      // do nothing
+    } else {
+      warn(token.column, warnings, "unexpected_a_b", "literal", token.value);
+      return;
+    }
+
+    if ( top.inParameterList ) {
+      token.inParameterList = true;
+    }
+
+    stack.push(token);
+  }
+
+  function validateOpenBracket(token, stack, warnings) {
+    var top;
+
+    if ( !stack.isUsed() ) {
+      stack.push(token);
+      return;
+    }
+
+    if ( stack.isUsed() && stack.isEmpty() ) {
+      warn(token.column, warnings, "unexpected_a_b", "(", token.value);
+      return;
+    }
+
+    top = stack.peek();
+
+    if ( top.isOperator() || top.isComma() ) {
+      stack.pop();
+    } else if ( top.isOpener() ) {
+      // do nothing
+    } else if ( top.isFunction() ){
+      token.inParameterList = true;
+    } else {
+      warn(token.column, warnings, "unexpected_a_b", "(", token.value);
+      return;
+    }
+
+    stack.push(token);
+  }
+
+  function validateCloseBracket(token, stack, warnings) {
+  }
+
+  function validateOperator(token, stack, warnings) {
   }
 
 })();

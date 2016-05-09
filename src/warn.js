@@ -46,7 +46,6 @@ module.exports = (function() {
     }
 
     message = supplant(messageTemplates[key], replacements);
-    console.log(message);
     warning = new Warning (column, key, message, a, b, c);
     warnings.push(warning);
   }
