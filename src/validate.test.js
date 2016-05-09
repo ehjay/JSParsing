@@ -79,6 +79,16 @@ describe('validate', function() {
       assert.isTrue(result.isValid);
     });
 
+    it('should accept relational operators', function () {
+      var result = validate("AND(a > b, c <= d)", ["AND"], ["a", "b", "c", "d"]);
+      assert.isTrue(result.isValid);
+    });
+
+    it('should accept commas after valid nested functions', function () {
+      var result = validate("OR(AND(a), b)", ["AND", "OR"], ["a", "b"]);
+      assert.isTrue(result.isValid);
+    });
+
     it('should warn about commas outside of parameter lists', function () {
       var result;
       var warning;
@@ -144,6 +154,13 @@ describe('validate', function() {
       assert.isTrue(result.isValid);
     });
 
+    it('should allow unary operators after binary operators', function () {
+      var result;
+
+      result = validate("a == -b", [], ["a", "b"]);
+      assert.isTrue(result.isValid);
+    });
+
     it('should allow unary operators in function parameters', function () {
       var result;
 
@@ -155,6 +172,11 @@ describe('validate', function() {
       var result;
 
       result = validate("AVG(abc, -wizard_points)", ["AVG"], ["abc", "wizard_points"]);
+      assert.isTrue(result.isValid);
+    });
+
+    it('should accept valid compound formulas', function () {
+      var result = validate("NOT(OR(AND(a >= b, c == -d), d >= -a))", ["AND","OR","NOT"], ["a", "b", "c", "d"]);
       assert.isTrue(result.isValid);
     });
 

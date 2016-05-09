@@ -247,8 +247,15 @@ module.exports = (function() {
       stack.pop();
     }
 
+    top = stack.peek();
+
     resolved_expression = resolved_expression.reverse().join("");
     resolved_token = createToken("variable", resolved_expression);
+
+    if ( top && top.inParameterList) {
+      resolved_token.inParameterList = true;
+    }
+
     stack.push(resolved_token);
   }
 
@@ -277,6 +284,12 @@ module.exports = (function() {
       return;
     }
 
+    if ( token.canBeUnary() && top.isOperator() ) {
+      stack.pop();
+      stack.push(token);
+      return;
+    }
+
     if ( token.canBeUnary() && top.isOpenBracket() ) {
       stack.push(token);
       return;
@@ -296,7 +309,6 @@ module.exports = (function() {
     var top;
 
     if ( stack.isNotUsed() || stack.isEmpty() ) {
-      console.log("not used/empty");
       warn(token.column, warnings, "unexpected_a", ",");
       return;
     }
@@ -314,7 +326,7 @@ module.exports = (function() {
   }
 
   function dump(stack) {
-    var values = _.map(stack.getValues(), 'value');
+    var values = _.map(stack.getValues(), function(val) { return "inParameterList: " + val.inParameterList + " type: " + val.type + " value: " + val.value; });
     var str = "[" + values.join(",") + "]";
     console.log(str);
   }
