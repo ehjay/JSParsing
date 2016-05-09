@@ -57,10 +57,10 @@ module.exports = (function() {
         validateCloseBracket(token, stack, warnings);
         break;
       case "unary_or_binary":
-        validateUnaryOrBinary(token, stack, warnings);
+        validateOperator(token, stack, warnings);
         break;
       case "binary":
-        validateBinary(token, stack, warnings);
+        validateOperator(token, stack, warnings);
         break;
     }
   }
@@ -84,7 +84,7 @@ module.exports = (function() {
   }
 
   function validateFunction(token, stack, warnings) {
-    var last;
+    var top;
 
     if ( !stack.isUsed() ) {
       stack.push(token);
@@ -92,15 +92,16 @@ module.exports = (function() {
     }
 
     if ( stack.isUsed() && stack.isEmpty() ) {
-      valid = false;
       warn(token.column, warnings, "unexpected_a_b", "function", token.value);
       return;
     }
 
-    last = stack.peek();
+    top = stack.peek();
 
-    if ( last.isOperator() || last.isOpener() ) {
-      // OK
+    if ( top.isOperator() || top.isComma() ) {
+      stack.pop();
+    } else if ( top.isOpener() ) {
+      // do nothing
     } else {
       warn(token.column, warnings, "unexpected_a_b", "function", token.value);
       return;
@@ -110,6 +111,32 @@ module.exports = (function() {
   }
 
   function validateVariable(token, stack, warnings) {
+    var top;
+
+    if ( !stack.isUsed() ) {
+      stack.push(token);
+      return;
+    }
+
+    if ( stack.isUsed() && stack.isEmpty() ) {
+      warn(token.column, warnings, "unexpected_a_b", "variable", token.value);
+      return;
+    }
+
+    top = stack.peek();
+
+    if ( top.isOperator() || top.isComma() ) {
+      stack.pop();
+    } else if ( top.isOpener() ) {
+      // do nothing
+    } else {
+      warn(token.column, warnings, "unexpected_a_b", "variable", token.value);
+      return;
+    }
+
+    if ( top.inParameterList ) {
+      token.inParameterList = true;
+    }
 
     stack.push(token);
   }

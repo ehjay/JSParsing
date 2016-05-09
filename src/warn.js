@@ -11,10 +11,13 @@ module.exports = (function() {
 
   return warn_at;
 
-  function Warning(column, key, message) {
+  function Warning(column, key, message, a, b, c) {
     this.column = column;
     this.key = key;
     this.message = message;
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
   function supplant(str, obj) {
@@ -44,7 +47,7 @@ module.exports = (function() {
 
     message = supplant(messageTemplates[key], replacements);
     console.log(message);
-    warning = new Warning (column, key, message);
+    warning = new Warning (column, key, message, a, b, c);
     warnings.push(warning);
   }
 

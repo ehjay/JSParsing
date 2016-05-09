@@ -3,10 +3,15 @@ module.exports = (function() {
   function Token(type, value) {
     this.type = type;
     this.value = value;
+    this.inParameterList = false;
   }
 
   Token.prototype.canBeUnary = function canBeUnary() {
     return this.type === 'unary_or_binary';
+  };
+
+  Token.prototype.isComma = function isComma() {
+    return this.type === ',';
   };
 
   Token.prototype.isFunction = function isFunction() {
