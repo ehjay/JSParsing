@@ -63,6 +63,41 @@ describe('validate', function() {
       assert.isTrue(result.isValid);
     });
 
+    it('should accept bracketed expressions that are not functions', function () {
+      var result = validate("(a)", [], ["a"]);
+      assert.isTrue(result.isValid);
+    });
+
+    it('should accept nested bracketed expressions', function () {
+      var result = validate("((a))", [], ["a"]);
+      assert.isTrue(result.isValid);
+
+      result = validate("(((a + b)))", [], ["a", "b"]);
+      assert.isTrue(result.isValid);
+
+      result = validate("((a) + (-b / c))", [], ["a", "b", "c"]);
+      assert.isTrue(result.isValid);
+    });
+
+    it('should warn about commas outside of parameter lists', function () {
+      var result;
+      var warning;
+
+      result = validate(",", [], []);
+      warning = result.warnings[0];
+
+      assert.equal(warning.column, 1);
+      assert.equal(warning.key, "unexpected_a");
+      assert.equal(warning.a, ",");
+
+      result = validate("(a,b)", [], ["a","b"]);
+      warning = result.warnings[0];
+
+      assert.equal(warning.column, 3);
+      assert.equal(warning.key, "unexpected_a");
+      assert.equal(warning.a, ",");
+    });
+
     it('should accept literals as function arguments', function () {
       var result = validate("MAX(2)", ["MAX"], []);
       assert.isTrue(result.isValid);

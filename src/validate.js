@@ -201,9 +201,9 @@ module.exports = (function() {
 
     if ( top.isOperator() || top.isComma() ) {
       stack.pop();
-    } else if ( top.isOpener() ) {
-      // do nothing
-    } else if ( top.isFunction() ){
+    } else if ( top && top.isOpener() ){
+      // okay to have nested brackets
+    } else if ( top && top.isFunction() ){
       token.inParameterList = true;
     } else {
       warn(token.column, warnings, "unexpected_a_b", "(", token.value);
@@ -242,7 +242,7 @@ module.exports = (function() {
     stack.pop();
     top = stack.peek();
 
-    if ( top || top.isFunction() ) {
+    if ( top && top.isFunction() ) {
       resolved_expression.push(top.value);
       stack.pop();
     }
@@ -304,8 +304,7 @@ module.exports = (function() {
     top = stack.peek();
 
     if ( !top.inParameterList || !top.isVariable() ) {
-      console.log("not in param list or not variable");
-      warn(token.column, warnings, "comma_must_follow_parameter");
+      warn(token.column, warnings, "unexpected_a", ",");
       return;
     }
 
