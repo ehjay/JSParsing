@@ -8,8 +8,8 @@
     "JSParsing": "./bin/JSParsing"
   },
   "scripts": {
-    "lint": "jshint **.js",
-    "test": "mocha \"**.js\""
+    "lint": "jshint src",
+    "test": "mocha src"
   },
   "main": "lib/foo.js",
   "repository": {
