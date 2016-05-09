@@ -34,10 +34,10 @@ module.exports = (function() {
       }
     });
 
-    // in the end, there should be a single variable in the stack
+    // in the end, there should be a single variable or literal in the stack
 
-    if ( stack.size() !== 1 || stack.peek().type !== "variable" ) {
-      warn(-1, warnings, "did_not_resolve_to_variable");
+    if ( stack.size() !== 1 || !stack.peek().isVariableOrLiteral() ) {
+      warn(-1, warnings, "bad_resolve");
     }
 
     return new Result(warnings);

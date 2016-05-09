@@ -39,6 +39,10 @@ module.exports = (function() {
     return this.type === 'variable';
   };
 
+  Token.prototype.isVariableOrLiteral = function isVariable() {
+    return this.isVariable() || this.isLiteral();
+  };
+
   return function createToken(type, value) {
     return new Token(type, value);
   };

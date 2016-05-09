@@ -7,6 +7,31 @@ describe('validate', function() {
       assert.isObject(validate("dumbledore", [], []));
     });
 
+    it('should accept variables as formulas', function () {
+      var result = validate("myvariable", [], ["myvariable"]);
+      assert.isTrue(result.isValid);
+
+      result = validate("myCamelCaseVar", [], ["myCamelCaseVar"]);
+      assert.isTrue(result.isValid);
+
+      result = validate("my_numbered_var_001", [], ["my_numbered_var_001"]);
+      assert.isTrue(result.isValid);
+    });
+
+    it('should accept literals as formulas', function () {
+      var result = validate("\"my string literal\"", [], []);
+      assert.isTrue(result.isValid);
+
+      result = validate("1", [], []);
+      assert.isTrue(result.isValid);
+
+      result = validate("47839", [], []);
+      assert.isTrue(result.isValid);
+
+      result = validate("0.001", [], []);
+      assert.isTrue(result.isValid);
+    });
+
     it('should warn about whitespace after a function', function () {
       var result;
       var warning;
@@ -67,14 +92,14 @@ describe('validate', function() {
       assert.isTrue(result.isValid);
     });
 
-    it('should warn if formula does not resolve to a variable', function () {
+    it('should warn if formula does not resolve to a variable or literal', function () {
       var result;
       var warning;
 
       result = validate("-", [], []);
       warning = result.warnings[0];
 
-      assert.equal(warning.key, "did_not_resolve_to_variable");
+      assert.equal(warning.key, "bad_resolve");
     });
 
     it('should allow unary operators', function () {
