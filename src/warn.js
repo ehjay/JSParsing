@@ -10,7 +10,8 @@ module.exports = (function() {
 
   return warn_at;
 
-  function Warning(key, message) {
+  function Warning(column, key, message) {
+    this.column = column;
     this.key = key;
     this.message = message;
   }
@@ -42,7 +43,7 @@ module.exports = (function() {
 
     message = supplant(messageTemplates[key], replacements);
     console.log(message);
-    warning = new Warning (key, message);
+    warning = new Warning (column, key, message);
     warnings.push(warning);
   }
 
