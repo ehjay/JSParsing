@@ -1,54 +1,12 @@
 var _ = require('lodash');
+var expandTokens = require('./expand-tokens');
 var stackFactory = require('./stack');
 var tokenize = require('./tokenize');
+var warn = require('./warn');
 
 module.exports = (function() {
-  var messageTemplates = {
-    expected_a_after_b: "expected {a} after {b} at column {column}",
-    expected_a_before_b: "expected {a} before {b} at column {column}",
-    unknown_identifier_a: "unknown identifier {a} found at column {column}"
-  };
 
-  return {
-    expandTokens: expandTokens,
-    validate: validate
-  };
-
-  function Warning(key, message) {
-    this.key = key;
-    this.message = message;
-  }
-
-  function supplant(str, obj) {
-    var rx_supplant = /\{([^{}]*)\}/g;
-
-    return str.replace(rx_supplant, function (match, inside) {
-      var replacement = obj[inside];
-      return (replacement !== undefined) ? replacement : match;
-    });
-  }
-
-  function warn_at(column, warnings, key, a, b, c) {
-    var message;
-    var replacements = { column: column };
-
-    if (a) {
-      replacements.a = a;
-    }
-
-    if (b) {
-      replacements.b = b;
-    }
-
-    if (c) {
-      replacements.c = c;
-    }
-
-    message = supplant(messageTemplates[key], replacements);
-    console.log(message);
-    warning = new Warning (key, message);
-    warnings.push(warning);
-  }
+  return validate;
 
   function validate(source, functionNames, variableNames) {
     var stack = stackFactory();
@@ -71,30 +29,6 @@ module.exports = (function() {
       valid: valid,
       warnings: warnings
     };
-  }
-
-  function expandTokens(tokens, functionNames, variableNames, warnings) {
-    var column = 1;
-
-    for (var i=0; i < tokens.length; i++) {
-      var token = tokens[i];
-      token.column = column;
-      column += token.value.length;
-
-      if (token.type !== "identifier") {
-        continue;
-      }
-
-      if ( _.includes(functionNames, token.value) ) {
-        token.type = "function";
-      } else if ( _.includes(variableNames, token.value) ) {
-        token.type = "variable";
-      } else {
-        warn_at(token.column, warnings, "unknown_identifier_a", token.value);
-      }
-    }
-
-    return tokens;
   }
 
   function validateToken(token, stack, warnings) {
@@ -132,7 +66,7 @@ module.exports = (function() {
     }
 
     if (stack.peek().type === "function") {
-      warn_at(token.column, warnings, "expected_a_after_b", "(", stack.peek().value);
+      warn(token.column, warnings, "expected_a_after_b", "(", stack.peek().value);
     }
   }
 
@@ -143,7 +77,7 @@ module.exports = (function() {
 
   function validateFunction(token, stack, warnings) {
     if (stack.isUsed() && ( stack.isEmpty() || !isBinary(stack.peek()) ) ) {
-      warn_at(token.column, warnings, "expected_a_before_b",  "operator", token.value);
+      warn(token.column, warnings, "expected_a_before_b",  "operator", token.value);
     }
 
     stack.push(token);
@@ -151,7 +85,7 @@ module.exports = (function() {
 
   function validateVariable(token, stack, warnings) {
     if (stack.isUsed() && ( stack.isEmpty() || !isBinary(stack.peek()) ) ) {
-      warn_at(token.column, warnings, "expected_a_before_b",  "operator", token.value);
+      warn(token.column, warnings, "expected_a_before_b",  "operator", token.value);
     }
 
     stack.push(token);
