@@ -1,6 +1,7 @@
 var _ = require('lodash');
 var expandTokens = require('./expand-tokens');
 var stackFactory = require('./stack');
+var createToken = require('./token');
 var tokenize = require('./tokenize');
 var warn = require('./warn');
 
@@ -32,6 +33,12 @@ module.exports = (function() {
         return new Result(warnings);
       }
     });
+
+    // in the end, there should be a single variable in the stack
+
+    if ( stack.size() !== 1 || stack.peek().type !== "variable" ) {
+      warn(-1, warnings, "did_not_resolve_to_variable");
+    }
 
     return new Result(warnings);
   }
@@ -208,6 +215,10 @@ module.exports = (function() {
 
   function validateCloseBracket(token, stack, warnings) {
     var top;
+    var resolved_token;
+    var resolved_expression = [];
+
+    resolved_expression.push(")")
 
     if ( !stack.isUsed() || stack.isEmpty() ) {
       warn(token.column, warnings, "missing_a_for_b", "(", ")");
@@ -217,6 +228,7 @@ module.exports = (function() {
     top = stack.peek();
 
     if ( top.isVariable() || top.isLiteral() ) {
+      resolved_expression.push(top.value);
       stack.pop();
       top = stack.peek();
     }
@@ -226,9 +238,24 @@ module.exports = (function() {
       return;
     }
 
+    resolved_expression.push(top.value);
+    stack.pop();
+    top = stack.peek();
+
+    if ( top || top.isFunction() ) {
+      resolved_expression.push(top.value);
+      stack.pop();
+    }
+
+    resolved_expression = resolved_expression.reverse().join("");
+    resolved_token = createToken("variable", resolved_expression);
+    stack.push(resolved_token);
   }
 
   function validateOperator(token, stack, warnings) {
+  }
+
+  function validateComma(token, stack, warnings) {
   }
 
   function dump(stack) {

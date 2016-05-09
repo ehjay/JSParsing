@@ -62,5 +62,10 @@ describe('validate', function() {
       assert.equal(warning.b, ")");
     });
 
+    it('should allow nested functions', function () {
+      var result = validate("NOT(NOT(NOT(cool)))", ["NOT"], ["cool"]);
+      assert.isTrue(result.isValid);
+    });
+
   });
 });
