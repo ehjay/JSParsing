@@ -13,7 +13,7 @@ module.exports = (function() {
       return used;
     };
 
-    this.isUnused = function isUnused() {
+    this.isNotUsed = function isUnused() {
       return !used;
     };
 

@@ -3,10 +3,12 @@ var _ = require('lodash');
 module.exports = (function() {
 
   var messageTemplates = {
+    comma_must_follow_parameter: "invalid , at column {column} , must follow a function parameter",
     did_not_resolve_to_variable: "the formula did not resolve to a variable",
     expected_a_after_b: "expected {a} after {b} at column {column}",
     expected_a_before_b: "expected {a} before {b} at column {column}",
     missing_a_for_b: "missing {a} for {b} at column {column}",
+    unexpected_a: "unexpected {a} found at column {column}",
     unexpected_a_b: "unexpected {a} {b} found at column {column}",
     unknown_identifier_a: "unknown identifier {a} found at column {column}"
   };

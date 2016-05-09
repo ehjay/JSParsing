@@ -69,8 +69,8 @@ module.exports = (function() {
       case "binary":
         validateOperator(token, stack, warnings);
         break;
-      case "comma":
-        validateOperator(token, stack, warnings);
+      case ",":
+        validateComma(token, stack, warnings);
         break;
       default:
         throw "tried to validate unknown token type";
@@ -137,7 +137,7 @@ module.exports = (function() {
 
     top = stack.peek();
 
-    if ( top.isOperator() || top.isComma() ) {
+    if ( top.isOperator() || top.isComma() || top.canBeUnary() ) {
       stack.pop();
     } else if ( top.isOpener() ) {
       // do nothing
@@ -168,7 +168,7 @@ module.exports = (function() {
 
     top = stack.peek();
 
-    if ( top.isOperator() || top.isComma() ) {
+    if ( top.isOperator() || top.isComma() || top.canBeUnary() ) {
       stack.pop();
     } else if ( top.isOpener() ) {
       // do nothing
@@ -218,9 +218,9 @@ module.exports = (function() {
     var resolved_token;
     var resolved_expression = [];
 
-    resolved_expression.push(")")
+    resolved_expression.push(")");
 
-    if ( !stack.isUsed() || stack.isEmpty() ) {
+    if ( stack.isNotUsed() || stack.isEmpty() ) {
       warn(token.column, warnings, "missing_a_for_b", "(", ")");
       return;
     }
@@ -253,9 +253,65 @@ module.exports = (function() {
   }
 
   function validateOperator(token, stack, warnings) {
+    var top;
+
+    if ( stack.isNotUsed() && token.canBeUnary() ) {
+      stack.push(token);
+      return;
+    }
+
+    if ( stack.isUsed() && stack.isEmpty() ) {
+      warn(token.column, warnings, "unexpected_a_b", "operator", token.value);
+      return;
+    }
+
+    top = stack.peek();
+
+    if (top.inParameterList) {
+      token.inParameterList = true;
+    }
+
+    if ( token.canBeUnary() && top.isComma() ) {
+      stack.pop();
+      stack.push(token);
+      return;
+    }
+
+    if ( token.canBeUnary() && top.isOpenBracket() ) {
+      stack.push(token);
+      return;
+    }
+
+    if ( top.isVariable() ) {
+      stack.pop();
+      stack.push(token);
+      return;
+    } else {
+      warn(token.column, warnings, "unexpected_a_b", "operator", token.value);
+      return;
+    }
   }
 
   function validateComma(token, stack, warnings) {
+    var top;
+
+    if ( stack.isNotUsed() || stack.isEmpty() ) {
+      console.log("not used/empty");
+      warn(token.column, warnings, "unexpected_a", ",");
+      return;
+    }
+
+    top = stack.peek();
+
+    if ( !top.inParameterList || !top.isVariable() ) {
+      console.log("not in param list or not variable");
+      warn(token.column, warnings, "comma_must_follow_parameter");
+      return;
+    }
+
+    stack.pop();
+    token.inParameterList = true;
+    stack.push(token);
   }
 
   function dump(stack) {

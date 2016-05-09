@@ -67,5 +67,36 @@ describe('validate', function() {
       assert.isTrue(result.isValid);
     });
 
+    it('should warn if formula does not resolve to a variable', function () {
+      var result;
+      var warning;
+
+      result = validate("-", [], []);
+      warning = result.warnings[0];
+
+      assert.equal(warning.key, "did_not_resolve_to_variable");
+    });
+
+    it('should allow unary operators', function () {
+      var result;
+
+      result = validate("-wizard_score", [], ["wizard_score"]);
+      assert.isTrue(result.isValid);
+    });
+
+    it('should allow unary operators in function parameters', function () {
+      var result;
+
+      result = validate("MAX(+wizard_points)", ["MAX"], ["wizard_points"]);
+      assert.isTrue(result.isValid);
+    });
+
+    it('should allow unary operators in multiple function parameters', function () {
+      var result;
+
+      result = validate("AVG(abc, -wizard_points)", ["AVG"], ["abc", "wizard_points"]);
+      assert.isTrue(result.isValid);
+    });
+
   });
 });

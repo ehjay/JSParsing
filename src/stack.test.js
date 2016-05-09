@@ -19,10 +19,10 @@ describe('stack', function() {
     it('should know when it is used', function () {
       var stack = stackFactory();
       assert.isFalse(stack.isUsed());
-      assert.isTrue(stack.isUnused());
+      assert.isTrue(stack.isNotUsed());
       stack.push(4);
       assert.isTrue(stack.isUsed());
-      assert.isFalse(stack.isUnused());
+      assert.isFalse(stack.isNotUsed());
     });
 
     it('should pop values', function () {
