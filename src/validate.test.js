@@ -49,5 +49,18 @@ describe('validate', function() {
       assert.isTrue(result.isValid);
     });
 
+    it('should warn about missing open brackets', function () {
+      var result;
+      var warning;
+
+      result = validate("c )", [], ["c"]);
+      warning = result.warnings[0];
+
+      assert.equal(warning.column, 3);
+      assert.equal(warning.key, "missing_a_for_b");
+      assert.equal(warning.a, "(");
+      assert.equal(warning.b, ")");
+    });
+
   });
 });

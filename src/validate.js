@@ -207,9 +207,34 @@ module.exports = (function() {
   }
 
   function validateCloseBracket(token, stack, warnings) {
+    var top;
+
+    if ( !stack.isUsed() || stack.isEmpty() ) {
+      warn(token.column, warnings, "missing_a_for_b", "(", ")");
+      return;
+    }
+
+    top = stack.peek();
+
+    if ( top.isVariable() || top.isLiteral() ) {
+      stack.pop();
+      top = stack.peek();
+    }
+
+    if ( !top || !top.isOpenBracket() ) {
+      warn(token.column, warnings, "missing_a_for_b", "(", ")");
+      return;
+    }
+
   }
 
   function validateOperator(token, stack, warnings) {
+  }
+
+  function dump(stack) {
+    var values = _.map(stack.getValues(), 'value');
+    var str = "[" + values.join(",") + "]";
+    console.log(str);
   }
 
 })();

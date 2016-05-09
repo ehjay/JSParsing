@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = (function() {
   function Stack() {
     var array = [];
@@ -38,6 +40,10 @@ module.exports = (function() {
 
     this.size = function size() {
       return array.length;
+    };
+
+    this.getValues = function getValues() {
+      return _.cloneDeep(array);
     };
   }
 

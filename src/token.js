@@ -18,13 +18,25 @@ module.exports = (function() {
     return this.type === 'function';
   };
 
+  Token.prototype.isLiteral = function isLiteral() {
+    return this.type === 'literal';
+  };
+
   Token.prototype.isOpener = function isOpener() {
+    return this.isOpenBracket();
+  };
+
+  Token.prototype.isOpenBracket = function isOpenBracket() {
     return this.type === "(";
   };
 
   Token.prototype.isOperator = function isOperator() {
     return this.type === 'unary_or_binary' ||
       this.type === 'binary';
+  };
+
+  Token.prototype.isVariable = function isVariable() {
+    return this.type === 'variable';
   };
 
   return function createToken(type, value) {
