@@ -8,6 +8,11 @@ module.exports = (function() {
 
   return validate;
 
+  function Result(warnings) {
+    this.valid = ( warnings.length > 0 ) ? false : true;
+    this.warnings = warnings;
+  }
+
   function validate(source, functionNames, variableNames) {
     var stack = stackFactory();
     var tokens = tokenize(source);
@@ -16,19 +21,19 @@ module.exports = (function() {
 
     expandTokens(tokens, functionNames, variableNames, warnings);
 
+    if (warnings.length > 0) {
+      return new Result(warnings);
+    }
+
     _.forEach(tokens, function(token) {
       validateToken(token, stack, warnings);
 
       if (warnings.length > 0) {
-        valid = false;
-        return false;
+        return new Result(warnings);
       }
     });
 
-    return {
-      valid: valid,
-      warnings: warnings
-    };
+    return new Result(warnings);
   }
 
   function validateToken(token, stack, warnings) {
