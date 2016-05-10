@@ -34,8 +34,6 @@ module.exports = (function() {
       }
     });
 
-    // in the end, there should be a single variable or literal in the stack
-
     if ( stack.size() !== 1 || !stack.peek().isVariableOrLiteral() ) {
       warn(-1, warnings, "bad_resolve");
     }
@@ -78,17 +76,15 @@ module.exports = (function() {
   }
 
   function validateWhitespace(token, stack, warnings) {
-    var last;
+    var top = stack.peek();
 
-    if (stack.isEmpty()) {
+    if ( !top ) {
       // whitespace should not be pushed onto the stack
       return;
     }
 
-    last = stack.peek();
-
-    if ( last && last.isFunction() ) {
-      warn(token.column, warnings, "expected_a_after_b", "(", last.value);
+    if ( top && top.isFunction() ) {
+      warn(token.column, warnings, "expected_a_after_b", "(", top.value);
       return;
     }
 
@@ -96,19 +92,12 @@ module.exports = (function() {
   }
 
   function validateFunction(token, stack, warnings) {
-    var top;
+    var top = stack.peek();
 
-    if ( !stack.isUsed() ) {
+    if ( !top ) {
       stack.push(token);
       return;
     }
-
-    if ( stack.isUsed() && stack.isEmpty() ) {
-      warn(token.column, warnings, "unexpected_a_b", "function", token.value);
-      return;
-    }
-
-    top = stack.peek();
 
     if ( top.isOperator() || top.isComma() ) {
       stack.pop();
@@ -123,21 +112,14 @@ module.exports = (function() {
   }
 
   function validateVariable(token, stack, warnings) {
-    var top;
+    var top = stack.peek();
 
-    if ( !stack.isUsed() ) {
+    if ( !top ) {
       stack.push(token);
       return;
     }
 
-    if ( stack.isUsed() && stack.isEmpty() ) {
-      warn(token.column, warnings, "unexpected_a_b", "variable", token.value);
-      return;
-    }
-
-    top = stack.peek();
-
-    if ( top.isOperator() || top.isComma() || top.canBeUnary() ) {
+    if ( top.isOperator() || top.isComma() ) {
       stack.pop();
     } else if ( top.isOpener() ) {
       // do nothing
@@ -154,21 +136,14 @@ module.exports = (function() {
   }
 
   function validateLiteral(token, stack, warnings) {
-    var top;
+    var top = stack.peek();
 
-    if ( !stack.isUsed() ) {
+    if ( !top ) {
       stack.push(token);
       return;
     }
 
-    if ( stack.isUsed() && stack.isEmpty() ) {
-      warn(token.column, warnings, "unexpected_a_b", "literal", token.value);
-      return;
-    }
-
-    top = stack.peek();
-
-    if ( top.isOperator() || top.isComma() || top.canBeUnary() ) {
+    if ( top.isOperator() || top.isComma() ) {
       stack.pop();
     } else if ( top.isOpener() ) {
       // do nothing
@@ -185,25 +160,18 @@ module.exports = (function() {
   }
 
   function validateOpenBracket(token, stack, warnings) {
-    var top;
+    var top = stack.peek();
 
-    if ( !stack.isUsed() ) {
+    if ( !top ) {
       stack.push(token);
       return;
     }
 
-    if ( stack.isUsed() && stack.isEmpty() ) {
-      warn(token.column, warnings, "unexpected_a_b", "(", token.value);
-      return;
-    }
-
-    top = stack.peek();
-
     if ( top.isOperator() || top.isComma() ) {
       stack.pop();
-    } else if ( top && top.isOpener() ){
+    } else if ( top.isOpener() ){
       // okay to have nested brackets
-    } else if ( top && top.isFunction() ){
+    } else if ( top.isFunction() ){
       token.inParameterList = true;
     } else {
       warn(token.column, warnings, "unexpected_a_b", "(", token.value);
@@ -214,21 +182,9 @@ module.exports = (function() {
   }
 
   function validateCloseBracket(token, stack, warnings) {
-    var top;
-    var resolved_token;
-    var resolved_expression = [];
-
-    resolved_expression.push(")");
-
-    if ( stack.isNotUsed() || stack.isEmpty() ) {
-      warn(token.column, warnings, "missing_a_for_b", "(", ")");
-      return;
-    }
-
-    top = stack.peek();
+    var top = stack.peek();
 
     if ( top.isVariable() || top.isLiteral() ) {
-      resolved_expression.push(top.value);
       stack.pop();
       top = stack.peek();
     }
@@ -238,25 +194,22 @@ module.exports = (function() {
       return;
     }
 
-    resolved_expression.push(top.value);
     stack.pop();
     top = stack.peek();
 
     if ( top && top.isFunction() ) {
-      resolved_expression.push(top.value);
       stack.pop();
+      top = stack.peek();
     }
 
-    top = stack.peek();
-
-    resolved_expression = resolved_expression.reverse().join("");
-    resolved_token = createToken("variable", resolved_expression);
-
-    if ( top && top.inParameterList) {
-      resolved_token.inParameterList = true;
+    if (top && top.inParameterList ) {
+      token.inParameterList = true;
     }
 
-    stack.push(resolved_token);
+    token.type = "variable";
+    token.value = "(evaluated expression)";
+
+    stack.push(token);
   }
 
   function validateOperator(token, stack, warnings) {
