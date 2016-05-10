@@ -251,16 +251,9 @@ module.exports = (function() {
   }
 
   function validateComma(token, stack, warnings) {
-    var top;
+    var top = stack.peek();
 
-    if ( stack.isNotUsed() || stack.isEmpty() ) {
-      warn(token.column, warnings, "unexpected_a", ",");
-      return;
-    }
-
-    top = stack.peek();
-
-    if ( !top.inParameterList || !top.isVariable() ) {
+    if ( !top || !top.inParameterList || !top.isVariable() ) {
       warn(token.column, warnings, "unexpected_a", ",");
       return;
     }
