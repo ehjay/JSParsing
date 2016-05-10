@@ -70,7 +70,7 @@ describe('tokenize', function() {
       assert.equal(token.value, ")");
     });
 
-    it('should tokenize unary and binary operators', function () {
+    it('should tokenize operators', function () {
       var raw;
       var token;
 
@@ -86,32 +86,32 @@ describe('tokenize', function() {
 
       raw = "!=";
       token = tokenize(raw)[0];
-      assert.equal(token.type, "binary");
+      assert.equal(token.type, "operator");
       assert.equal(token.value, "!=");
 
       raw = "==";
       token = tokenize(raw)[0];
-      assert.equal(token.type, "binary");
+      assert.equal(token.type, "operator");
       assert.equal(token.value, "==");
 
       raw = ">=";
       token = tokenize(raw)[0];
-      assert.equal(token.type, "binary");
+      assert.equal(token.type, "operator");
       assert.equal(token.value, ">=");
 
       raw = ">";
       token = tokenize(raw)[0];
-      assert.equal(token.type, "binary");
+      assert.equal(token.type, "operator");
       assert.equal(token.value, ">");
 
       raw = "*";
       token = tokenize(raw)[0];
-      assert.equal(token.type, "binary");
+      assert.equal(token.type, "operator");
       assert.equal(token.value, "*");
 
       raw = "/";
       token = tokenize(raw)[0];
-      assert.equal(token.type, "binary");
+      assert.equal(token.type, "operator");
       assert.equal(token.value, "/");
     });
 

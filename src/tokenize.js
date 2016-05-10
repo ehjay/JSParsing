@@ -19,8 +19,8 @@ module.exports = (function() {
     // 4 string or number literal
     // 5 open bracket
     // 6 close bracket
-    // 7 unary or binary operators (+ or -)
-    // 8 binary operators
+    // 7 plus or minus
+    // 8 operators
     // 9 comma
     // 10 the rest
 
@@ -50,7 +50,7 @@ module.exports = (function() {
         type = 'plus_or_minus';
         break;
       case 8:
-        type = 'binary';
+        type = 'operator';
         break;
       case 9:
         type = ',';

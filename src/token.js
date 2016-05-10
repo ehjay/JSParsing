@@ -22,17 +22,16 @@ module.exports = (function() {
     return this.type === 'literal';
   };
 
-  Token.prototype.isOpener = function isOpener() {
-    return this.isOpenBracket();
-  };
-
   Token.prototype.isOpenBracket = function isOpenBracket() {
     return this.type === "(";
   };
 
   Token.prototype.isOperator = function isOperator() {
-    return this.type === 'plus_or_minus' ||
-      this.type === 'binary';
+    return this.type === 'operator';
+  };
+
+  Token.prototype.isPlusOrMinus = function isOperator() {
+    return this.type === 'plus_or_minus';
   };
 
   Token.prototype.isVariable = function isVariable() {

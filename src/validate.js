@@ -65,7 +65,7 @@ module.exports = (function() {
       case "plus_or_minus":
         validatePlusOrMinus(token, stack, warnings);
         break;
-      case "binary":
+      case "operator":
         validateOperator(token, stack, warnings);
         break;
       case ",":
@@ -97,9 +97,9 @@ module.exports = (function() {
       return;
     }
 
-    if ( top.isOperator() || top.isComma() ) {
+    if ( top.isOperator() || top.isPlusOrMinus() || top.isComma() ) {
       stack.pop();
-    } else if ( top.isOpener() ) {
+    } else if ( top.isOpenBracket() ) {
       // do nothing
     } else {
       warn(token.column, warnings, "unexpected_a_b", "function", token.value);
@@ -117,9 +117,9 @@ module.exports = (function() {
       return;
     }
 
-    if ( top.isOperator() || top.isComma() ) {
+    if ( top.isOperator() || top.isPlusOrMinus() || top.isComma() ) {
       stack.pop();
-    } else if ( top.isOpener() ) {
+    } else if ( top.isOpenBracket() ) {
       // do nothing
     } else {
       warn(token.column, warnings, "unexpected_a_b", "variable", token.value);
@@ -141,9 +141,9 @@ module.exports = (function() {
       return;
     }
 
-    if ( top.isOperator() || top.isComma() ) {
+    if ( top.isOperator() || top.isPlusOrMinus() || top.isComma() ) {
       stack.pop();
-    } else if ( top.isOpener() ) {
+    } else if ( top.isOpenBracket() ) {
       // do nothing
     } else {
       warn(token.column, warnings, "unexpected_a_b", "literal", token.value);
@@ -165,7 +165,7 @@ module.exports = (function() {
       return;
     }
 
-    if ( top.isOpener() || top.isOperator() ){
+    if ( top.isOpenBracket() || top.isOperator() || top.isPlusOrMinus() ){
       // okay
     } else if ( top.isFunction() ){
       token.inParameterList = true;

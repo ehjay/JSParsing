@@ -80,7 +80,6 @@ describe('validate', function() {
 
     it('should accept calculated nested bracketed expressions', function () {
       var result = validate("((a) + (-b / c))", [], ["a", "b", "c"]);
-      console.log(result.warnings);
       assert.isTrue(result.isValid);
     });
 
