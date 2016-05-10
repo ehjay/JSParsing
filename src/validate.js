@@ -27,6 +27,7 @@ module.exports = (function() {
     }
 
     _.forEach(tokens, function(token) {
+      // dump(stack);
       validateToken(token, stack, warnings);
 
       if (warnings.length > 0) {
@@ -61,8 +62,8 @@ module.exports = (function() {
       case ")":
         validateCloseBracket(token, stack, warnings);
         break;
-      case "unary_or_binary":
-        validateOperator(token, stack, warnings);
+      case "plus_or_minus":
+        validatePlusOrMinus(token, stack, warnings);
         break;
       case "binary":
         validateOperator(token, stack, warnings);
@@ -79,7 +80,6 @@ module.exports = (function() {
     var top = stack.peek();
 
     if ( !top ) {
-      // whitespace should not be pushed onto the stack
       return;
     }
 
@@ -87,8 +87,6 @@ module.exports = (function() {
       warn(token.column, warnings, "expected_a_after_b", "(", top.value);
       return;
     }
-
-    // whitespace should not be pushed onto the stack
   }
 
   function validateFunction(token, stack, warnings) {
@@ -167,10 +165,8 @@ module.exports = (function() {
       return;
     }
 
-    if ( top.isOperator() || top.isComma() ) {
-      stack.pop();
-    } else if ( top.isOpener() ){
-      // okay to have nested brackets
+    if ( top.isOpener() || top.isOperator() ){
+      // okay
     } else if ( top.isFunction() ){
       token.inParameterList = true;
     } else {
@@ -197,7 +193,7 @@ module.exports = (function() {
     stack.pop();
     top = stack.peek();
 
-    if ( top && top.isFunction() ) {
+    if ( top &&  top.isFunction() ) {
       stack.pop();
       top = stack.peek();
     }
@@ -209,46 +205,42 @@ module.exports = (function() {
     token.type = "variable";
     token.value = "(evaluated expression)";
 
-    stack.push(token);
+    validateVariable(token, stack, warnings);
   }
 
-  function validateOperator(token, stack, warnings) {
-    var top;
+  function validatePlusOrMinus(token, stack, warnings) {
+    var top = stack.peek();
 
-    if ( stack.isNotUsed() && token.canBeUnary() ) {
+    if ( !top ) {
       stack.push(token);
       return;
     }
-
-    if ( stack.isUsed() && stack.isEmpty() ) {
-      warn(token.column, warnings, "unexpected_a_b", "operator", token.value);
-      return;
-    }
-
-    top = stack.peek();
 
     if (top.inParameterList) {
       token.inParameterList = true;
     }
 
-    if ( token.canBeUnary() && top.isComma() ) {
+    if ( top.isComma() || top.isOperator() || top.isVariable() || top.isLiteral() ) {
       stack.pop();
       stack.push(token);
       return;
-    }
-
-    if ( token.canBeUnary() && top.isOperator() ) {
-      stack.pop();
+    } else if ( top.isOpenBracket() ) {
       stack.push(token);
       return;
-    }
-
-    if ( token.canBeUnary() && top.isOpenBracket() ) {
-      stack.push(token);
+    } else {
+      warn(token.column, warnings, "unexpected_a_b", "operator", token.value);
       return;
     }
+  }
 
-    if ( top.isVariable() ) {
+  function validateOperator(token, stack, warnings) {
+    var top = stack.peek();
+
+    if (top.inParameterList) {
+      token.inParameterList = true;
+    }
+
+    if ( top.isVariable() || top.isLiteral() ) {
       stack.pop();
       stack.push(token);
       return;
@@ -279,8 +271,8 @@ module.exports = (function() {
   }
 
   function dump(stack) {
-    var values = _.map(stack.getValues(), function(val) { return "inParameterList: " + val.inParameterList + " type: " + val.type + " value: " + val.value; });
-    var str = "[" + values.join(",") + "]";
+    var values = _.map(stack.getValues(), function(val) { return val.value; });
+    var str = "stack dump: [\"" + values.join("\",\"") + "\"]";
     console.log(str);
   }
 

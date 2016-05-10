@@ -47,7 +47,7 @@ module.exports = (function() {
         type = ')';
         break;
       case 7:
-        type = 'unary_or_binary';
+        type = 'plus_or_minus';
         break;
       case 8:
         type = 'binary';
@@ -56,8 +56,7 @@ module.exports = (function() {
         type = ',';
         break;
       default:
-        type = 'unknown';
-        break;
+        throw "unknown token type matched";
     }
 
     stream.push(token(type, value));

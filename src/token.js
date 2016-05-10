@@ -6,8 +6,8 @@ module.exports = (function() {
     this.inParameterList = false;
   }
 
-  Token.prototype.canBeUnary = function canBeUnary() {
-    return this.type === 'unary_or_binary';
+  Token.prototype.isPlusOrMinus = function isPlusOrMinus() {
+    return this.type === 'plus_or_minus';
   };
 
   Token.prototype.isComma = function isComma() {
@@ -31,7 +31,7 @@ module.exports = (function() {
   };
 
   Token.prototype.isOperator = function isOperator() {
-    return this.type === 'unary_or_binary' ||
+    return this.type === 'plus_or_minus' ||
       this.type === 'binary';
   };
 

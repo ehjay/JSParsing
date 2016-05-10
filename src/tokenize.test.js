@@ -76,12 +76,12 @@ describe('tokenize', function() {
 
       raw = "+";
       token = tokenize(raw)[0];
-      assert.equal(token.type, "unary_or_binary");
+      assert.equal(token.type, "plus_or_minus");
       assert.equal(token.value, "+");
 
       raw = "-";
       token = tokenize(raw)[0];
-      assert.equal(token.type, "unary_or_binary");
+      assert.equal(token.type, "plus_or_minus");
       assert.equal(token.value, "-");
 
       raw = "!=";

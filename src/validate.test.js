@@ -68,14 +68,19 @@ describe('validate', function() {
       assert.isTrue(result.isValid);
     });
 
-    it('should accept nested bracketed expressions', function () {
+    it('should accept doubly nested bracketed expressions', function () {
       var result = validate("((a))", [], ["a"]);
       assert.isTrue(result.isValid);
+    });
 
-      result = validate("(((a + b)))", [], ["a", "b"]);
+    it('should accept triply nested bracketed expressions', function () {
+      var result = validate("(((a + b)))", [], ["a", "b"]);
       assert.isTrue(result.isValid);
+    });
 
-      result = validate("((a) + (-b / c))", [], ["a", "b", "c"]);
+    it('should accept calculated nested bracketed expressions', function () {
+      var result = validate("((a) + (-b / c))", [], ["a", "b", "c"]);
+      console.log(result.warnings);
       assert.isTrue(result.isValid);
     });
 
